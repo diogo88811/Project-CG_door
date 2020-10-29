@@ -116,6 +116,7 @@ static GLfloat cor[] = { BLUE, BLUE, BLUE, BLUE, RED, RED, RED, RED, YELLOW, YEL
 float centrox = 0;
 float rotacao = 0;
 float rotacaPortaPequena = 0;
+float doorLocker = 0;
 GLboolean   frenteVisivel = 0;
 GLint sempreRodar = 0;
 GLint sempreRodar1 = 0;
@@ -272,8 +273,6 @@ void drawScene() {
 	
 	//the small door to open 
 	glPushMatrix();
-	//glTranslatef(0.3 * tam, 2 * tam, 3 * tam);
-
 
 	glTranslatef(0, 4 * tam, 0);
 	glRotatef(rotacaPortaPequena, 0, 0, 1);
@@ -286,7 +285,6 @@ void drawScene() {
 	glTranslatef(0.3 * tam, 2 * tam, 5 * tam);
 	glScalef(0.3, 2, 1);
 	draw_cube();
-
 	glPopMatrix();
 
 	glPushMatrix();
@@ -294,6 +292,14 @@ void drawScene() {
 	glScalef(0.3, 2, 1);
 	draw_cube();
 	glPopMatrix();
+
+
+	glPushMatrix(); //door locker
+	glTranslatef(0, 10*tam, (tam * 5) + doorLocker);
+	glScalef(0.1,0.1,0.5);
+	draw_cube();
+	glPopMatrix();
+
 
 	
 
@@ -383,9 +389,14 @@ void keyboard(unsigned char key, int x, int y) {
 			glutPostRedisplay();
 			break;
 
-		case 'A':
-		case 'a':
-			//??
+		case 'y':
+		case 'Y':
+			if (doorLocker == 0) {
+				doorLocker = 0.5;
+			}
+			else {
+				doorLocker = 0;
+			}
 			glutPostRedisplay();
 			break;
 
@@ -464,7 +475,7 @@ int main(int argc, char** argv) {
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowSize(wScreen, hScreen);
 	glutInitWindowPosition(400, 100);
-	glutCreateWindow("|Observador:'SETAS'|  |Projecao -'p'| |Open the Door- 'r''t'| |Small Door- 'e'| ");
+	glutCreateWindow("|Observador:'SETAS'|  |Projecao -'p'| |Open the Door- 'r''t'| |Small Door- 'e'| |open and close the door lock 'y'| ");
 
 	initialize();
 
