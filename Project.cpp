@@ -77,12 +77,13 @@ GLfloat transparente[4] = { 1,1,1, 0.2 };
 
 //----------------- foco
 bool 		Focos[] = { 1,1 };		//.. Dois Focos ligados ou desligados
-GLfloat		aberturaFoco = 5.0;		//.. angulo inicial do foco
+GLfloat		aberturaFoco = 6;		//.. angulo inicial do foco
 GLfloat		anguloINC = 3.0;		//.. incremento
 GLfloat		anguloMIN = 3.0;		//.. minimo
 GLfloat		anguloMAX = 70.0;		//.. maximo
-GLfloat Pos1[] = { 0, 3, -4, 1.0 };   // Foco 1
-GLfloat Pos2[] = { 0, 3, -4, 1.0 };   // Foco 2 
+//GLfloat Pos1[] = { 25, 5, 1, 1.0 };   // Foco 1
+GLfloat Pos1[] = { 6, 4, 5, 1.0 };   // Foco 1
+GLfloat Pos2[] = { 8.5, 5, 5, 1.0 };   // Foco 2 
 //GLfloat Pos2[] = { -2.5, 3.5, -1.0, 1.0 };
 
 //--------------------------------------------- Escada
@@ -222,7 +223,7 @@ void initLights(void) {
 void defineFoco() {
 	GLfloat Foco_direccao[] = { -1, 0, 0, 0 };	//……… -Z
 	//GLfloat Foco_direccao[] = { 0, 0, -1, 0 };	//……… -Z
-	GLfloat Foco1_cor[] = { 0, 1,  0, 1 };	//……… Cor da luz 1
+	GLfloat Foco1_cor[] = { 1, 1,  1, 1 };	//……… Cor da luz 1
 	GLfloat Foco2_cor[] = { 1, 0,  0, 1 };	//……… Cor da luz 2
 	GLfloat Foco_ak = 1.0;
 	GLfloat Foco_al = 0.05f;
@@ -331,7 +332,7 @@ void initialize(void)
 
 
 	initLights();
-	defineFoco();
+	//defineFoco();
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT2);
 	glEnable(GL_LIGHT1);
@@ -429,9 +430,23 @@ void desenha()
 	glRotatef(90, 0, 1, 0);
 	glTranslatef(-6, 3, 0.4); // meio do poligono 
 
-	glNormal3f(0, 0, 1);          //normal 
+	glNormal3f(0, 0, 1); //normal
+	if (malha) {
+		glBegin(GL_QUADS);
 
-	glBegin(GL_QUADS);
+		glTexCoord2f(0, 0);
+		glVertex3d(0, 0, 0);
+		glTexCoord2f(1, 0);
+		glVertex3d(2, 0, 0);
+		glTexCoord2f(1, 1);
+		glVertex3d(2, 2, 0);
+		glTexCoord2f(0, 1);
+		glVertex3d(0, 2, 0);
+
+		glEnd();
+	}
+	else {
+		glBegin(GL_QUADS);
 	for (i = 0; i < dim; i++)
 		for (j = 0; j < dim; j++) {
 			glTexCoord2f((float)j / dim, (float)i / dim);
@@ -444,6 +459,10 @@ void desenha()
 			glVertex3d((float)j / med_dim, (float)(i + 1) / med_dim, 0);
 		}
 	glEnd();
+	}
+	
+
+	
 	glPopMatrix();
 }
 
@@ -484,7 +503,6 @@ void drawScene() {
 
 	//glTranslatef(centrox, altura, 0.0);
 	//glTranslatef(0.3/2, 6/2, 3/2);
-
 
 	glMaterialfv(GL_FRONT, GL_AMBIENT, whitePlasticAmb1);
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, whitePlasticDif1);
@@ -650,6 +668,7 @@ void display(void) {
 	//…………………………………………………………………………………………………………………………………………………………Objectosgl
 	glEnable(GL_LIGHTING);
 	iluminacao();
+	//defineFoco();
 	drawEixos();
 	drawObservador_Local();
 	drawObservador_Target();
@@ -670,6 +689,7 @@ void display(void) {
 	glLoadIdentity();
 	gluLookAt(obsP[0], obsP[1], obsP[2], obsT[0], obsT[1], obsT[2], 0, 1, 0);
 	//…………………………………………………………………………………………………………………………………………………………Objecto
+	defineFoco();
 	iluminacao();
 	drawEixos();
 	drawScene();
@@ -717,15 +737,31 @@ void keyboard(unsigned char key, int x, int y) {
 		glutPostRedisplay();
 		break;
 
-	case 'n':
+	case 'n': 
 	case 'N':
-		if (malha == 0)
+		if (malha == 0) {
 			malha = 1;
-		else
+			glutPostRedisplay();
+		}
+		else {
 			malha = 0;
-		glutPostRedisplay();
+			glutPostRedisplay();
+		}
+		
 		break;
 	
+	case 'h':
+	case 'H':
+		if (aberturaFoco < 15) {
+			aberturaFoco = aberturaFoco + 0.5;
+			glutPostRedisplay();
+		}
+		else {
+			aberturaFoco = 5;
+			glutPostRedisplay();
+		}
+
+		break;
 	case 'o':
 	case 'O':
 		Focos[0] = !Focos[0];
